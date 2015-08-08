@@ -6,6 +6,7 @@ import com.haritonova.contacts.entity.Contact;
 import com.haritonova.contacts.exception.DAOException;
 import com.haritonova.contacts.exception.ServiceException;
 import com.haritonova.contacts.utils.SortType;
+import org.apache.log4j.Logger;
 
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -14,6 +15,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author  Veronica_Haritonova
  */
 public class ContactServiceImpl implements IContactService{
+    Logger logger = Logger.getLogger(ContactServiceImpl.class);
     private IContactDAO contactDAO;
     {
         contactDAO = new ContactDAOImpl();
@@ -28,16 +30,18 @@ public class ContactServiceImpl implements IContactService{
             }
             return contactDAO.getContactList(from,amount,sortType);
         } catch (DAOException | IllegalArgumentException e) {
+            logger.error(e);
             throw new ServiceException(e);
-            //logger
+
         }
     }
     public void saveContactList(List<Contact> contactList) throws ServiceException {
         try {
             contactDAO.saveContactList(contactList);
         } catch (DAOException e) {
+            logger.error(e);
             throw new ServiceException(e);
-            //logger
+
         }
     }
 
@@ -52,7 +56,7 @@ public class ContactServiceImpl implements IContactService{
         try {
             return contactDAO.getContactsAmount();
         } catch (DAOException e) {
-            //logger
+            logger.error(e);
             throw new ServiceException(e);
         }
     }
