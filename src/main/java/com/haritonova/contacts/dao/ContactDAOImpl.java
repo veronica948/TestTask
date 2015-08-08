@@ -16,14 +16,14 @@ import java.util.List;
  * Class, which implements interface IContactDAO and realize operations with table of contacts in database
  */
 public class ContactDAOImpl implements IContactDAO{
-    private static final String SQL_INSERT_CONTACT = "INSERT INTO contact (name, surname, login, email, phoneNumber) "
-            + "VALUES (?,?,?,?,?) ";
-    private static final String SQL_SELECT_CONTACTS = "SELECT c.name, c.surname, c.login, c.email, c.phoneNumber " +
+    private static final String SQL_INSERT_CONTACT = "INSERT INTO contact (contact_id, name, surname, login, email, phone_number) "
+            + "VALUES (contact_seq.nextval,?,?,?,?,?) ";
+    private static final String SQL_SELECT_CONTACTS = "SELECT * FROM ( SELECT t.* , ROWNUM rnum FROM (SELECT c.name, c.surname, c.login, c.email, c.phoneNumber " +
             "FROM contact c ";
-    private static final String SQL_ORDER_BY_NAME = " ORDER BY c.name ";
-    private static final String SQL_ORDER_BY_SURNAME = " ORDER BY c.surname ";
-    private static final String SQL_ORDER_BY_LOGIN = " ORDER BY c.login ";
-    private static final String SQL_LIMIT = " LIMIT ?, ? ";
+    private static final String SQL_ORDER_BY_NAME = " ORDER BY c.name ) t )";
+    private static final String SQL_ORDER_BY_SURNAME = " ORDER BY c.surname ) t )";
+    private static final String SQL_ORDER_BY_LOGIN = " ORDER BY c.login ) t) ";
+    private static final String SQL_LIMIT = " WHERE rnum BETWEEN ? AND ?";
     private static final String SQL_COUNT_ALL = "SELECT COUNT(*) FROM contact ";
 
     /**
@@ -37,15 +37,17 @@ public class ContactDAOImpl implements IContactDAO{
      */
     public List<Contact> getContactList(int from, int amount, SortType sortType) throws DAOException {
         Connection cn = null;
-        Statement st = null;
+        PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             StringBuffer query = new StringBuffer(SQL_SELECT_CONTACTS);
             addSortCondition(query, sortType);
             query.append(SQL_LIMIT);
             cn = getConnection();
-            st = cn.createStatement();
-            rs = st.executeQuery(query.toString());
+	    ps = cn.prepareStatement(query.toString());
+ps.setInt(1, from);
+ps.setInf(2, from + amount);
+            rs = ps.executeQuery();
             List<Contact> contactList = new ArrayList<Contact>();
             Contact contact;
             while (rs.next()) {
@@ -58,7 +60,7 @@ public class ContactDAOImpl implements IContactDAO{
         } finally {
             returnConnection(cn);
             closeResultSet(rs);
-            closeStatement(st);
+            closeStatement(ps);
         }
     }
 

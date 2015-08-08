@@ -1,4 +1,4 @@
-package com.haritonova.contacts.pool;
+﻿package com.haritonova.contacts.pool;
 
 import com.haritonova.contacts.exception.PoolConnectionException;
 import org.apache.log4j.Logger;
@@ -30,11 +30,11 @@ public class Pool {
         String dbPath = bundle.getString("db.path");
         String login = bundle.getString("db.login");
         String pass = bundle.getString("db.password");
+	String schema = bundle.getString("db.schema");
         POOL_SIZE = Integer.parseInt(bundle.getString("pool.size"));
         resources = new ArrayBlockingQueue<Connection>(POOL_SIZE);
-        DriverManager.registerDriver(new com.mysql.jdbc.Driver());
         for (int i = 0; i < POOL_SIZE; i++) {
-            Connection cn = DriverManager.getConnection(dbPath, login, pass);
+            Connection cn = DriverManager.getConnection(dbPath, login, pass); //schema
             resources.put(cn);
         }
     }
