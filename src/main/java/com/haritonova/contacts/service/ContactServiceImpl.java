@@ -20,12 +20,20 @@ public class ContactServiceImpl implements IContactService{
     {
         contactDAO = new ContactDAOImpl();
     }
+    /**
+    * Get list of contacts of defined amount starting from defined place
+    * @param from
+    * @param amount
+    * @param sortCondition
+    * @throws ServiceException
+    * @return list of contacts
+    */
     public List<Contact> getContactList(int from, int amount,String sortCondition) throws ServiceException {
         try {
             SortType sortType = SortType.NAME;
             if(sortCondition != null) {
                 if(!sortCondition.isEmpty()) {
-                    sortType = SortType.valueOf(sortCondition);
+                    sortType = SortType.valueOf(sortCondition.toUpperCase());
                 }
             }
             return contactDAO.getContactList(from,amount,sortType);
@@ -35,6 +43,11 @@ public class ContactServiceImpl implements IContactService{
 
         }
     }
+    /**
+     * Save contacts' list
+     * @param contactList
+     * @throws ServiceException
+     */
     public void saveContactList(List<Contact> contactList) throws ServiceException {
         try {
             contactDAO.saveContactList(contactList);

@@ -8,8 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author  Veronica_Haritonova
  */
-public class EmptyAction implements Action {
+public class ToImportAction implements Action {
+    @Override
     public String execute(HttpServletRequest request) throws ActionException {
-        return ConfigManager.getProperty("path.page.index");
+        return ConfigManager.getProperty("path.page.file.load");
     }
 }

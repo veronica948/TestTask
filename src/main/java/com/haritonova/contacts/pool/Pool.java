@@ -1,4 +1,4 @@
-﻿package com.haritonova.contacts.pool;
+package com.haritonova.contacts.pool;
 
 import com.haritonova.contacts.exception.PoolConnectionException;
 import org.apache.log4j.Logger;
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by Пользователь on 04.11.2014.
+ * Created by Veronica on 09.08.2015.
  */
 public class Pool {
     private static Logger logger = Logger.getLogger(Pool.class);
@@ -30,9 +30,10 @@ public class Pool {
         String dbPath = bundle.getString("db.path");
         String login = bundle.getString("db.login");
         String pass = bundle.getString("db.password");
-	String schema = bundle.getString("db.schema");
         POOL_SIZE = Integer.parseInt(bundle.getString("pool.size"));
         resources = new ArrayBlockingQueue<Connection>(POOL_SIZE);
+        Locale.setDefault(Locale.ENGLISH);
+        DriverManager.registerDriver (new oracle.jdbc.OracleDriver());
         for (int i = 0; i < POOL_SIZE; i++) {
             Connection cn = DriverManager.getConnection(dbPath, login, pass); //schema
             resources.put(cn);
@@ -45,7 +46,7 @@ public class Pool {
                 resources.put(cn);
             }
         } catch (InterruptedException e) {
-         logger.error("InterruptedException(problem with putting element in blocking queue)",e);
+            logger.error("InterruptedException(problem with putting element in blocking queue)",e);
         }
     }
 
@@ -54,7 +55,7 @@ public class Pool {
         try {
             cn = resources.take();
         } catch (InterruptedException e) {
-             throw new PoolConnectionException("InterruptedException(problem with taking element from blocking queue)",e);
+            throw new PoolConnectionException("InterruptedException(problem with taking element from blocking queue)",e);
         }
         return cn;
     }
@@ -94,3 +95,4 @@ public class Pool {
         }
     }
 }
+

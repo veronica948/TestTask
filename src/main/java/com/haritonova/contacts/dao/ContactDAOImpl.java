@@ -18,7 +18,7 @@ import java.util.List;
 public class ContactDAOImpl implements IContactDAO{
     private static final String SQL_INSERT_CONTACT = "INSERT INTO contact (contact_id, name, surname, login, email, phone_number) "
             + "VALUES (contact_seq.nextval,?,?,?,?,?) ";
-    private static final String SQL_SELECT_CONTACTS = "SELECT * FROM ( SELECT t.* , ROWNUM rnum FROM (SELECT c.name, c.surname, c.login, c.email, c.phoneNumber " +
+    private static final String SQL_SELECT_CONTACTS = "SELECT * FROM ( SELECT t.* , ROWNUM rnum FROM (SELECT c.name, c.surname, c.login, c.email, c.phone_number " +
             "FROM contact c ";
     private static final String SQL_ORDER_BY_NAME = " ORDER BY c.name ) t )";
     private static final String SQL_ORDER_BY_SURNAME = " ORDER BY c.surname ) t )";
@@ -44,9 +44,9 @@ public class ContactDAOImpl implements IContactDAO{
             addSortCondition(query, sortType);
             query.append(SQL_LIMIT);
             cn = getConnection();
-	    ps = cn.prepareStatement(query.toString());
-ps.setInt(1, from);
-ps.setInf(2, from + amount);
+	        ps = cn.prepareStatement(query.toString());
+            ps.setInt(1, from);
+            ps.setInt(2, from + amount);
             rs = ps.executeQuery();
             List<Contact> contactList = new ArrayList<Contact>();
             Contact contact;

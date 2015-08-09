@@ -6,7 +6,7 @@ import com.haritonova.contacts.exception.ActionException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by Пользователь on 07.10.2014.
+ * @author  Veronica_Haritonova
  */
 public interface Action {
     String execute(HttpServletRequest request) throws ActionException;

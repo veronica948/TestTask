@@ -1,7 +1,7 @@
 package com.haritonova.contacts.utils;
 
 /**
- * Created by Veronica on 08.08.2015.
+ * @author  Veronica_Haritonova
  */
 public enum SortType {
     NAME, SURNAME, LOGIN

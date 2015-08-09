@@ -3,16 +3,18 @@
 <%@ taglib prefix="ctg" uri="customtags" %>
 <html>
   <head>
-    <title>Contacts</title>
+    <title>Import contacts</title>
   </head>
   <body>
-    <c:import url="${ pageContext.request.contextPath }/WEB-INF/jsp/common/menu.jsp" />
+    <c:import url="/WEB-INF/jsp/common/menu.jsp" />
+    ${successfulOperation}
+    ${busy}
+    ${emptyFile}
     <section>
-        <form action="${ pageContext.request.contextPath }/controller?action=import_contacts"
-          enctype="multipart/form-data" method="post">
-           <label for="file"> Load file</label>
-           <input id = "file" type="file" name="file">
-           </form>
+        <form action="${ pageContext.request.contextPath }/controller?action=import_contacts" enctype="multipart/form-data" method="post">
+           <input id = "file" type="file" name="file"/>
+           <input type="submit"/>
+        </form>
     </section>
    </body>
  </html>

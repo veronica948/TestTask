@@ -2,11 +2,10 @@
 <nav>
     <ul>
         <li>
-            <a href="${ pageContext.request.contextPath }/contacts?action=GET_CONTACTS&page=1">Contact List</a>
+            <a href="${ pageContext.request.contextPath }/controller?action=get_contacts&page=1">Contact List</a>
         </li>
         <li>
-            <a href="${ pageContext.request.contextPath }/WEB-INF/jsp/loadFile.jsp">Import contacts</a>
+            <a href="${ pageContext.request.contextPath }/controller?action=to_import_page">Import contacts</a>
         </li>
     </ul>
-
 </nav>

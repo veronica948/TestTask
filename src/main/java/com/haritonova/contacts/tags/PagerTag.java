@@ -27,7 +27,6 @@ public class PagerTag extends SimpleTagSupport {
     public void doTag() throws JspException {
         try {
             PageContext pageContext = (PageContext) getJspContext();
-            HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
             JspWriter out = pageContext.getOut();
             int currentPage = page;
             int generalAmountOfPages = (int) Math.ceil((double) generalAmount / ControllerUtils.CONTACTS_AMOUNT_ON_PAGE);
@@ -35,7 +34,8 @@ public class PagerTag extends SimpleTagSupport {
             int firstPageNumber;
             StringBuffer form = new StringBuffer();
             StringBuffer formCondition = new StringBuffer();
-            formCondition.append("<form  action=/controller?action=get_contacts>");
+            formCondition.append("<form  action=/contacts/controller style=\'display:inline-block;margin-right:8px\' >");
+            formCondition.append("<input type=hidden name=action value=get_contacts >");
             int pagerHalf = (int) Math.ceil((double) PAGER_AMOUNT / 2);
             if (generalAmountOfPages > 1) {
                 if (currentPage > 1) {

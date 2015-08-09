@@ -11,6 +11,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,10 +22,14 @@ import java.io.IOException;
  * Created by Пользователь on 07.10.2014.
  */
 @WebServlet(
-        urlPatterns = {"/contacts"}
+        urlPatterns = {"/"},
+        name = "controller"
 )
+@MultipartConfig
 public class Controller extends HttpServlet {
     static Logger logger = Logger.getLogger(Controller.class);
+
+    private static final String ATTR_EXCEPTION = "exception";
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         processRequest(request, response);
@@ -42,7 +47,7 @@ public class Controller extends HttpServlet {
             page = action.execute(request);
         } catch (ActionException e) {
             logger.error(e.getMessage(), e.getCause());
-            request.setAttribute("exception", e.getCause());
+            request.setAttribute(ATTR_EXCEPTION, e.getCause());
             page = ConfigManager.getProperty("path.page.error");
         }
         RequestDispatcher dispatcher = request.getRequestDispatcher(page);
@@ -55,7 +60,7 @@ public class Controller extends HttpServlet {
         String path = this.getServletContext().getRealPath("/");
         new DOMConfigurator().doConfigure(path + "/log4j.xml", LogManager.getLoggerRepository());
     }
-
+    @Override
     public void destroy() {
         super.destroy();
         Pool.getPool().closePool();

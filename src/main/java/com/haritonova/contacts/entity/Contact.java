@@ -1,7 +1,8 @@
 package com.haritonova.contacts.entity;
 
 /**
- * Created by Veronica on 08.08.2015.
+ * @author Veronica_haritonova
+ * Class to store information about contact
  */
 public class Contact {
     private String name;

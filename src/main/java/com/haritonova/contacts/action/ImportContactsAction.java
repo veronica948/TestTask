@@ -8,9 +8,12 @@ import com.haritonova.contacts.manager.ConfigManager;
 import com.haritonova.contacts.service.ContactServiceImpl;
 import com.haritonova.contacts.service.IContactService;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -25,28 +28,38 @@ public class ImportContactsAction implements Action {
     }
     private static final String ATTR_SUCCESS_OPERATION = "successfulOperation";
     private static final String MSG_SUCCESS = "success";
-    ReentrantLock lock = new ReentrantLock();
+    private static final String PARAM_FILE = "file";
+    private static final String MSG_EMPTY = "You haven't chosen the file";
+    private static final String ATTR_EMPTY = "emptyFile";
+    private static final String ATTR_BUSY = "busy";
+    private static final String MSG_BUSY = "This operation ia not available now, because it's performed by other user. Try again later.";
+    private ReentrantLock lock = new ReentrantLock();
     public String execute(HttpServletRequest request) throws ActionException {
         BufferedReader bufferedReader = null;
         try {
-            if(!lock.tryLock()) {
-                //lock.lock();
-                bufferedReader = request.getReader();
-                String line;
-                String delims = ",";
-                String[] items;
-                List<Contact> contactList = new ArrayList<Contact>();
-                while ((line = bufferedReader.readLine()) != null) {
-                    items = line.split(delims);
-                    Contact contact = new Contact(items[0],items[1],items[2],items[3],items[4]);
-                    contactList.add(contact);
+            if(lock.tryLock()) {
+                Part part = request.getPart(PARAM_FILE);
+                if(part.getSize() != 0) {
+                    bufferedReader = new BufferedReader(new InputStreamReader(part.getInputStream()));
+                    String line;
+                    String delims = ",";
+                    String[] items;
+                    List<Contact> contactList = new ArrayList<Contact>();
+                    while ((line = bufferedReader.readLine()) != null) {
+                        items = line.split(delims);
+                        Contact contact = new Contact(items[0], items[1], items[2], items[3], items[4]);
+                        contactList.add(contact);
+                    }
+                    contactService.saveContactList(contactList);
+                    request.setAttribute(ATTR_SUCCESS_OPERATION, MSG_SUCCESS);
+                } else {
+                    request.setAttribute(ATTR_EMPTY,MSG_EMPTY);
                 }
-                contactService.saveContactList(contactList);
-                request.setAttribute(ATTR_SUCCESS_OPERATION, MSG_SUCCESS);
+                lock.unlock();
             } else {
-                request.setAttribute("busy","busy");
+                request.setAttribute(ATTR_BUSY, MSG_BUSY);
             }
-        } catch (IOException | ServiceException e) {
+        } catch (IOException | ServiceException | ServletException e) {
             throw new ActionException(e);
         } finally {
                 if(bufferedReader != null) {
@@ -56,8 +69,7 @@ public class ImportContactsAction implements Action {
                         e.printStackTrace();
                     }
                 }
-                lock.unlock();
             }
-        return ConfigManager.getProperty("path.page.main");
+        return ConfigManager.getProperty("path.page.file.load");
     }
 }
